@@ -33,15 +33,15 @@ st.title("Image to Text Converter")
 st.title("Created by Yue Hang")
 uploaded_files = st.file_uploader("Upload an image that contains text", type=("png", "jpg", "jpeg", "pdf"), accept_multiple_files=True)
 
-# # Path to the Tesseract executable
-# pytesseract.pytesseract.tesseract_cmd = r"/usr/bin/tesseract"
+# Path to the Tesseract executable
+pytesseract.pytesseract.tesseract_cmd = r"/usr/bin/tesseract"
 
-# Find the Tesseract executable
-tesseract_path = shutil.which("tesseract")
-if tesseract_path is not None:
-    pytesseract.pytesseract.tesseract_cmd = tesseract_path
-else:
-    raise EnvironmentError("Tesseract not found. Please ensure it is installed and in your PATH.")
+# # Find the Tesseract executable
+# tesseract_path = shutil.which("tesseract")
+# if tesseract_path is not None:
+#     pytesseract.pytesseract.tesseract_cmd = tesseract_path
+# else:
+#     raise EnvironmentError("Tesseract not found. Please ensure it is installed and in your PATH.")
 
 
 # Preprocess the input image
