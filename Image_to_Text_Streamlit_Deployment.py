@@ -50,83 +50,91 @@ def image_preprocessor(loaded_image):
     Process the input image by converting it into gray scale.
     1. Input image file name
     """
-    # Convert the image into grey scale
-    gray_image = ImageOps.grayscale(loaded_image)
-
-    # Convert the the image into Numpy array so that we can process it with cv2 median blur later
-    gray_image_np = np.array(gray_image)
-
-    # # Remove noise
-    # denoised = cv2.medianBlur(gray_image_np, 3)
-
-    # # Convert the grayscale image to black and white
-    # bw_image = gray_image.point(lambda x: 0 if x < 128 else 255, '1')
-
-    return gray_image
+    try:
+        # Convert the image into grey scale
+        gray_image = ImageOps.grayscale(loaded_image)
+    
+        # Convert the the image into Numpy array so that we can process it with cv2 median blur later
+        gray_image_np = np.array(gray_image)
+    
+        # # Remove noise
+        # denoised = cv2.medianBlur(gray_image_np, 3)
+    
+        # # Convert the grayscale image to black and white
+        # bw_image = gray_image.point(lambda x: 0 if x < 128 else 255, '1')
+    
+        return gray_image
+    except Exception as e:
+        st.error(f"Error in image preprocessing: {e}")
+        return None
 
 
 for file in uploaded_files:
-    file_extension = re.findall(r"\.([a-z]+)$", file.name)[0]
-
-    if file_extension == "pdf":
-        # Save the uploaded PDF to a temporary file
-        with open("temp.pdf", "wb") as f:
-            f.write(file.getbuffer())
-
-        # Convert PDF to images
-        images = convert_from_path("temp.pdf")
-
-        for i, image in enumerate(images):
+    try:
+        file_extension = re.findall(r"\.([a-z]+)$", file.name)[0]
+    
+        if file_extension == "pdf":
+            # Save the uploaded PDF to a temporary file
+            with open("temp.pdf", "wb") as f:
+                f.write(file.getbuffer())
+    
+            # Convert PDF to images
+            images = convert_from_path("temp.pdf")
+    
+            for i, image in enumerate(images):
+                # Preprocess the input image
+                processed_image = image_preprocessor(image)
+    
+                # Perform image to text conversion
+                text = pytesseract.image_to_string(processed_image)
+    
+                # Display the extracted text
+                st.write(f"Extracted Text from Page {i + 1}:")
+                st.write(text)
+                
+                # Save the extracted text to a file
+                text_file = io.BytesIO(text.encode('utf-8'))
+                text_file_name = f"{file.name}_extracted_text.txt"
+    
+                # Provide a download link for the text file
+                st.download_button(
+                    label=f"Download Extracted Text from Page {i + 1}",
+                    data=text_file,
+                    file_name=text_file_name,
+                    mime="text/plain"
+                )
+        
+        elif file_extension in ["png", "jpg", "jpeg"]:
+            # Load the uploaded image
+            image = Image.open(file)
+    
             # Preprocess the input image
             processed_image = image_preprocessor(image)
-
+    
             # Perform image to text conversion
             text = pytesseract.image_to_string(processed_image)
-
+    
             # Display the extracted text
-            st.write(f"Extracted Text from Page {i + 1}:")
+            st.write("Extracted Text:")
             st.write(text)
             
             # Save the extracted text to a file
-            text_file = io.StringIO(text)
+            text_file = io.BytesIO(text.encode('utf-8'))
             text_file_name = f"{file.name}_extracted_text.txt"
-
+    
             # Provide a download link for the text file
             st.download_button(
-                label=f"Download Extracted Text from Page {i + 1}",
+                label="Download Extracted Text",
                 data=text_file,
                 file_name=text_file_name,
                 mime="text/plain"
             )
     
-    elif file_extension in ["png", "jpg", "jpeg"]:
-        # Load the uploaded image
-        image = Image.open(file)
-
-        # Preprocess the input image
-        processed_image = image_preprocessor(image)
-
-        # Perform image to text conversion
-        text = pytesseract.image_to_string(processed_image)
-
-        # Display the extracted text
-        st.write("Extracted Text:")
-        st.write(text)
-        
-        # Save the extracted text to a file
-        text_file = io.StringIO(text)
-        text_file_name = f"{file.name}_extracted_text.txt"
-
-        # Provide a download link for the text file
-        st.download_button(
-            label="Download Extracted Text",
-            data=text_file,
-            file_name=text_file_name,
-            mime="text/plain"
-        )
-
-    else:
-        st.error("The input file format is invalid. It should be in PDF, PNG, JPG, or JPEG instead!")
+        else:
+            st.error("The input file format is invalid. It should be in PDF, PNG, JPG, or JPEG instead!")
+    
+    except Exception as e:
+        st.error(f"Error processing file {file.name}: {e}")
 
 # Clean up temporary files
 if os.path.exists("temp.pdf"):
