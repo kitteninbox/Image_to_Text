@@ -124,6 +124,9 @@ for file in uploaded_files:
 
             # Debugging output
             st.write(f"Loaded JPG Image mode: {jpg_image.mode}, size: {jpg_image.size}")
+
+            # Display the uploaded image
+            st.image(jpg_image, caption=f"Uploaded Image: {file.name}", use_column_width=True)
     
             # Preprocess the input image
             processed_image = image_preprocessor(jpg_image)
@@ -150,6 +153,9 @@ for file in uploaded_files:
         elif file_extension in ["jpg", "jpeg"]:
             # Load the uploaded image
             image = Image.open(file)
+
+            # Display the uploaded image
+            st.image(image, caption=f"Uploaded Image: {file.name}", use_column_width=True)
     
             # Preprocess the input image
             processed_image = image_preprocessor(image)
