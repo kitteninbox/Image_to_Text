@@ -104,7 +104,7 @@ for file in uploaded_files:
                 # Provide a download link for the text file
                 st.download_button(
                     label=f"Download Extracted Text from Page {i + 1}",
-                    data=text_file,
+                    data=text_file.getvalue(),
                     file_name=text_file_name,
                     mime="text/plain"
                 )
@@ -133,7 +133,7 @@ for file in uploaded_files:
             # Provide a download link for the text file
             st.download_button(
                 label="Download Extracted Text",
-                data=text_file,
+                data=text_file.getvalue(),
                 file_name=text_file_name,
                 mime="text/plain"
             )
@@ -159,7 +159,7 @@ for file in uploaded_files:
             # Provide a download link for the text file
             st.download_button(
                 label="Download Extracted Text",
-                data=text_file,
+                data=text_file.getvalue(),
                 file_name=text_file_name,
                 mime="text/plain"
             )
