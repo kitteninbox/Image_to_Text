@@ -72,6 +72,7 @@ def image_preprocessor(loaded_image):
 def convert_png_to_jpg(loaded_image, temp_path):
     jpg_image = loaded_image.convert("RGB")
     jpg_image.save(temp_path, format="JPEG")
+    st.write(f"Converted Image saved at: {temp_path}")
     return jpg_image
 
 
@@ -120,6 +121,9 @@ for file in uploaded_files:
 
             # Load the saved JPG image
             jpg_image = Image.open(temp_jpg_path)
+
+            # Debugging output
+            st.write(f"Loaded JPG Image mode: {jpg_image.mode}, size: {jpg_image.size}")
     
             # Preprocess the input image
             processed_image = image_preprocessor(jpg_image)
