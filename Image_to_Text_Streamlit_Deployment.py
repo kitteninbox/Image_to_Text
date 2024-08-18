@@ -71,7 +71,7 @@ def image_preprocessor(loaded_image):
 
 def convert_png_to_jpg(loaded_image, temp_path):
     jpg_image = loaded_image.convert("RGB")
-    jpg_image.save(temp_path)
+    jpg_image.save(temp_path, format="JPEG")
     return jpg_image
 
 
