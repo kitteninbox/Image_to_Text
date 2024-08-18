@@ -69,8 +69,9 @@ def image_preprocessor(loaded_image):
         return None
 
 
-def convert_png_to_jpg(loaded_image):
+def convert_png_to_jpg(loaded_image, temp_path):
     jpg_image = loaded_image.convert("RGB")
+    jpg_image.save(temp_path)
     return jpg_image
 
 
@@ -114,7 +115,11 @@ for file in uploaded_files:
             image = Image.open(file)
 
             # Convert the image from PNG to JPG
-            jpg_image = convert_png_to_jpg(image)
+            temp_jpg_path = "temp.jpg"
+            jpg_image = convert_png_to_jpg(image, temp_jpg_path)
+
+            # Load the saved JPG image
+            jpg_image = Image.open(temp_jpg_path)
     
             # Preprocess the input image
             processed_image = image_preprocessor(jpg_image)
@@ -173,3 +178,5 @@ for file in uploaded_files:
 # Clean up temporary files
 if os.path.exists("temp.pdf"):
     os.remove("temp.pdf")
+if os.path.exists("temp.jpg"):
+    os.remove("temp.jpg")
