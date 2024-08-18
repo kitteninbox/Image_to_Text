@@ -69,6 +69,11 @@ def image_preprocessor(loaded_image):
         return None
 
 
+def convert_png_to_jpg(loaded_image):
+    jpg_image = png_image.convert("RGB")
+    return jpg_image
+
+
 for file in uploaded_files:
     try:
         file_extension = re.findall(r"\.([a-z]+)$", file.name)[0]
@@ -104,7 +109,36 @@ for file in uploaded_files:
                     mime="text/plain"
                 )
         
-        elif file_extension in ["png", "jpg", "jpeg"]:
+        elif file_extension == "png":
+            # Load the uploaded image
+            image = Image.open(file)
+
+            # Convert the image from PNG to JPG
+            jpg_image = convert_png_to_jpg(image)
+    
+            # Preprocess the input image
+            processed_image = image_preprocessor(jpg_image)
+    
+            # Perform image to text conversion
+            text = pytesseract.image_to_string(processed_image)
+    
+            # Display the extracted text
+            st.write("Extracted Text:")
+            st.write(text)
+            
+            # Save the extracted text to a file
+            text_file = io.BytesIO(text.encode('utf-8'))
+            text_file_name = f"{file.name}_extracted_text.txt"
+    
+            # Provide a download link for the text file
+            st.download_button(
+                label="Download Extracted Text",
+                data=text_file,
+                file_name=text_file_name,
+                mime="text/plain"
+            )
+        
+        elif file_extension in ["jpg", "jpeg"]:
             # Load the uploaded image
             image = Image.open(file)
     
